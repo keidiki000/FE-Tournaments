@@ -1,34 +1,32 @@
 # 👑 Familia Ender Tournaments
 
-> Donde los campeones escriben su legado ⚔️  
+> *Donde los campeones escriben su legado ⚔️*
 
-**Familia Ender Tournaments** es una página web interactiva que registra, organiza y muestra los torneos competitivos de la comunidad **Familia Ender**, con un diseño moderno, visual y dinámico.  
-
-El proyecto sirve como **hub central de torneos**, mostrando resultados, rankings globales y un “Hall of Fame” con los campeones de cada evento.
-
----
-
-## 🚀 Demo en línea
-
-🌐 **Sitio desplegado en Netlify:**  
-➡️ [https://familia-ender-tournaments.netlify.app](https://familia-ender-tournaments.netlify.app) *(reemplazá con tu URL real)*
+**Familia Ender Tournaments** es una plataforma web dedicada a registrar y mostrar los torneos competitivos de la comunidad **Familia Ender**.  
+Presenta una interfaz moderna, interactiva y responsive, con ranking de jugadores, campeonatos históricos y un "Hall of Fame" para los campeones legendarios.
 
 ---
 
-## 🧱 Características Principales
+## 🌐 **Demo en línea**
 
-- 🗓️ **Calendario de Torneos:** muestra todos los eventos realizados en el año.
-- 🧩 **Tabla Global de Campeones:** ranking dinámico por cantidad de títulos.
-- 👑 **Hall of Fame:** destaca a los ganadores de cada torneo con estilo dorado y animaciones.
-- 🧍‍♂️ **Perfiles de jugadores (en construcción):** sección reservada para futuras estadísticas personales.
-- 🎨 **Diseño responsive y moderno:** basado en **TailwindCSS** y tipografías de Google Fonts.
-- ⚡ **Interactividad total en un solo archivo HTML:** sin dependencias externas ni backend.
+🔗 **Sitio oficial:** [https://familia-ender-tournaments.netlify.app](https://familia-ender-tournaments.netlify.app)  
 
 ---
 
-## 🖼️ Vista Previa
+## 🏗️ **Características Principales**
 
-_(Podés agregar una imagen o captura del sitio)_
+- 🗓️ **Calendario de torneos:** muestra todos los eventos anuales (desde 2020 a 2025).
+- 🏆 **Tabla de campeones:** ranking global dinámico según títulos y subtítulos.
+- 👑 **Hall of Fame:** sección dorada que destaca a los ganadores absolutos de cada torneo.
+- 🧍‍♂️ **Perfiles de jugadores:** sección “En construcción” para futuras estadísticas individuales.
+- 🎨 **Diseño moderno:** interfaz con tema oscuro, efectos dorados y animaciones suaves.
+- ⚡ **Totalmente estático:** sin dependencias externas, solo HTML, CSS y JS puro.
+
+---
+
+## 🖼️ **Vista previa**
+
+Agregá una captura del sitio en tu repositorio:
 
 ```markdown
 ![Preview del sitio](./preview.png)
