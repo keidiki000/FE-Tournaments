@@ -24,9 +24,3 @@ Presenta una interfaz moderna, interactiva y responsive, con ranking de jugadore
 
 ---
 
-## 🖼️ **Vista previa**
-
-Agregá una captura del sitio en tu repositorio:
-
-```markdown
-![Preview del sitio](./preview.png)
