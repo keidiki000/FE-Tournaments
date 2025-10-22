@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Familia Ender Tournaments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        .gradient-gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+
+        .palace-bg {
+            position: relative;
+            background: #0a0a0a;
+        }
+
+        .palace-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./images/hall-of-fame-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: blur(1px) brightness(0.5);
+            z-index: 0;
+        }
+
+        .palace-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.4) 0%, rgba(10, 10, 10, 0.6) 50%, rgba(10, 10, 10, 0.7) 100%);
+            z-index: 1;
+        }
+
+        .palace-bg > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-trophy {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 215, 0, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-trophy:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .crown-glow {
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)); }
+        }
+
+        .table-row {
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-left-color: #FFD700;
+        }
+
+        .rank-1 { border-left-color: #FFD700 !important; background: rgba(255, 215, 0, 0.05); }
+        .rank-2 { border-left-color: #C0C0C0 !important; background: rgba(192, 192, 192, 0.03); }
+        .rank-3 { border-left-color: #CD7F32 !important; background: rgba(205, 127, 50, 0.03); }
+
+        nav a {
+            position: relative;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #FFD700, #663399);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::before {
+            width: 100%;
+        }
+
+        .section-active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section-hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            line-height: 1.1;
+            letter-spacing: 2px;
+        }
+
+        .purple-accent {
+            color: #9370DB;
+        }
+
+        .tournament-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.5);
+            transition: all 0.4s ease;
+        }
+
+        .stat-number {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+        }
+
+        .mini-table {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mini-table:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .upcoming-card {
+            background: linear-gradient(135deg, rgba(147, 112, 219, 0.1), rgba(255, 215, 0, 0.05));
+            border: 1px solid rgba(147, 112, 219, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .upcoming-card:hover {
+            border-color: rgba(147, 112, 219, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .player-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: #FFD700;
+            transform: rotate(90deg);
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .result-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+        .result-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); color: #000; }
+        .result-3 { background: linear-gradient(135deg, #CD7F32, #B87333); color: #000; }
+        .result-other { background: rgba(255, 255, 255, 0.1); color: #ccc; }
+        .result-nj { background: rgba(100, 100, 100, 0.3); color: #888; }
+
+        /* Tournament Cards Styles */
+        .year-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .year-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+        }
+
+        .year-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .tournament-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 215, 0, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.15);
+        }
+
+        .tournament-card-header {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(147, 112, 219, 0.1));
+        }
+
+        .tournament-card:hover .tournament-bg {
+            filter: brightness(0.7);
+            transform: scale(1.05);
+        }
+
+        .tournament-card-body {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .tournament-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .tournament-champion {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .tournament-champion-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .tournament-champion-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .tournament-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-black bg-opacity-80 backdrop-blur-xl border-b border-white border-opacity-10">
+        <div class="container mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <h1 class="title-font text-xl md:text-2xl font-bold text-white tracking-wider">
+                    FAMILIA ENDER
+                </h1>
+                <nav class="flex gap-6 md:gap-8 text-sm md:text-base">
+                    <a href="#" onclick="showSection('home')" class="text-gray-300 hover:text-white transition">Inicio</a>
+                    <a href="#" onclick="showSection('torneos')" class="text-gray-300 hover:text-white transition">Torneos</a>
+                    <a href="#" onclick="showSection('tabla')" class="text-gray-300 hover:text-white transition">Ranking</a>
+                    <a href="#" onclick="showSection('hall')" class="text-gray-300 hover:text-white transition">Hall of Fame</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        
+        <!-- HOME SECTION -->
+        <section id="home" class="section-active">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col items-center justify-center min-h-[70vh] text-center">
+                    <div class="mb-6">
+                        <span class="crown-glow text-7xl md:text-8xl">👑</span>
+                    </div>
+                    <h2 class="title-font hero-title font-black gradient-gold mb-6">
+                        TOURNAMENTS
+                    </h2>
+                    <p class="text-xl md:text-2xl text-gray-300 font-light max-w-2xl mb-12">
+                        Donde los campeones escriben su legado
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-8 md:gap-16 mt-8">
+                        <div class="flex flex-col items-center">
+                            <div class="stat-number gradient-gold mb-2">40+</div>
+                            <div class="text-sm md:text-base text-gray-400 uppercase tracking-wide">Torneos</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="stat-number text-white mb-2">15+</div>
+                            <div class="text-sm md:text-base text-gray-400 uppercase tracking-wide">Jugadores</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="stat-number purple-accent mb-2">46</div>
+                            <div class="text-sm md:text-base text-gray-400 uppercase tracking-wide">Títulos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximos Torneos y Actuales -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 max-w-6xl mx-auto">
+                    <!-- Torneos Actuales -->
+                    <div class="upcoming-card p-8 rounded-2xl">
+                        <h3 class="title-font text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                            <span class="text-3xl">🎮</span> Torneos Actuales
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-white bg-opacity-5 p-4 rounded-lg">
+                                <p class="text-gray-400 text-center text-lg">MINECRAFT SPEEDRUN SET SEED</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Próximos Torneos -->
+                    <div class="upcoming-card p-8 rounded-2xl">
+                        <h3 class="title-font text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                            <span class="text-3xl">📅</span> Próximos Torneos
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-white bg-opacity-5 p-4 rounded-lg">
+                                <p class="text-gray-400 text-center text-lg">Próximamente...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Ranking Table -->
+                <div class="mt-16 max-w-4xl mx-auto mb-16">
+                    <div class="mini-table bg-white bg-opacity-5 backdrop-blur-lg rounded-2xl overflow-hidden border border-white border-opacity-10" onclick="showSection('tabla')">
+                        <div class="p-6 bg-white bg-opacity-5 border-b border-white border-opacity-10 flex justify-between items-center">
+                            <h3 class="title-font text-2xl font-bold text-white">Top Jugadores</h3>
+                            <span class="text-sm text-gray-400">Click para ver más →</span>
+                        </div>
+                        <table class="w-full">
+                            <tbody id="miniRankingTable">
+                                <!-- Top 5 will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TORNEOS SECTION -->
+        <section id="torneos" class="section-hidden">
+            <div class="container mx-auto px-6 py-16">
+                <h2 class="title-font text-4xl md:text-5xl font-bold text-center mb-4 text-white">Historia de Torneos</h2>
+                <p class="text-center text-gray-400 mb-16">Todas las competencias desde 2020</p>
+                
+                <div id="tournamentsContainer" class="max-w-7xl mx-auto space-y-20">
+                    <!-- Tournament years will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLA SECTION -->
+        <section id="tabla" class="section-hidden">
+            <div class="container mx-auto px-6 py-16">
+                <h2 class="title-font text-4xl md:text-5xl font-bold text-center mb-4 text-white">Tabla de Campeones</h2>
+                <p class="text-center text-gray-400 mb-12">Clasificación general por títulos obtenidos</p>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white bg-opacity-5 backdrop-blur-lg rounded-2xl overflow-hidden border border-white border-opacity-10">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-white bg-opacity-5 border-b border-white border-opacity-10">
+                                    <th class="text-left py-4 px-6 text-gray-300 font-semibold uppercase tracking-wide text-sm">Pos</th>
+                                    <th class="text-left py-4 px-6 text-gray-300 font-semibold uppercase tracking-wide text-sm">Jugador</th>
+                                    <th class="text-center py-4 px-6 text-gray-300 font-semibold uppercase tracking-wide text-sm">Títulos</th>
+                                    <th class="text-center py-4 px-6 text-gray-300 font-semibold uppercase tracking-wide text-sm">Subtítulos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rankingTable">
+                                <!-- Rankings will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HALL OF FAME SECTION -->
+        <section id="hall" class="section-hidden palace-bg">
+            <div class="container mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="title-font text-5xl md:text-7xl font-black gradient-gold mb-6">
+                        HALL OF FAME
+                    </h2>
+                    <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                        Los inmortales que conquistaron la gloria eterna
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto" id="hallOfFame">
+                    <!-- Hall of fame cards will be injected here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Player Profile Modal -->
+    <div id="playerModal" class="player-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePlayerModal()">&times;</span>
+            <div id="playerModalContent" class="p-8">
+                <!-- Player content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black bg-opacity-50 border-t border-white border-opacity-10 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">© 2025 <span class="text-white font-semibold">Familia Ender</span> — Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Player detailed data
+        const playerStats = {
+            "Lesquick": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "1°" },
+                { tournament: "UHC Minecraft", position: "1°" },
+                { tournament: "Supercopa UHC", position: "1°" },
+                { tournament: "Boxeo Roblox", position: "NJ" },
+                { tournament: "FIFA 25", position: "1°" },
+                { tournament: "Brawlhalla", position: "4-6°" },
+                { tournament: "Fulbo", position: "1°" },
+                { tournament: "CSGO 2v2", position: "NJ" },
+                { tournament: "PES 6", position: "1°" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "1°" },
+                { tournament: "Brawlhalla 2v2", position: "3-4°" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Conor": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "NJ" },
+                { tournament: "UHC Minecraft", position: "6°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "NJ" },
+                { tournament: "FIFA 25", position: "3-4°" },
+                { tournament: "Brawlhalla", position: "7°" },
+                { tournament: "Fulbo", position: "2°" },
+                { tournament: "CSGO 2v2", position: "3-4°" },
+                { tournament: "PES 6", position: "3-4°" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "NJ" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Axer": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "3-4°" },
+                { tournament: "UHC Minecraft", position: "1°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "NJ" },
+                { tournament: "FIFA 25", position: "7-8°" },
+                { tournament: "Brawlhalla", position: "8°" },
+                { tournament: "Fulbo", position: "NJ" },
+                { tournament: "CSGO 2v2", position: "NJ" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "3-4°" },
+                { tournament: "Mortal Kombat", position: "2°" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Sergio": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "3-4°" },
+                { tournament: "Copa Keidiki", position: "3-4°" },
+                { tournament: "UHC Minecraft", position: "3°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "7-8°" },
+                { tournament: "FIFA 25", position: "7-8°" },
+                { tournament: "Brawlhalla", position: "9°" },
+                { tournament: "Fulbo", position: "2°" },
+                { tournament: "CSGO 2v2", position: "3-4°" },
+                { tournament: "PES 6", position: "3-4°" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "1°" },
+                { tournament: "Mortal Kombat", position: "4°" },
+                { tournament: "Fortnite", position: "3°" },
+                { tournament: "BT3", position: "3-4°" }
+            ],
+            "TyrnRexx": [
+                { tournament: "Pokémon", position: "1°" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "NJ" },
+                { tournament: "UHC Minecraft", position: "5°" },
+                { tournament: "Supercopa UHC", position: "2°" },
+                { tournament: "Boxeo Roblox", position: "NJ" },
+                { tournament: "FIFA 25", position: "NJ" },
+                { tournament: "Brawlhalla", position: "1°" },
+                { tournament: "Fulbo", position: "2°" },
+                { tournament: "CSGO 2v2", position: "1°" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "1°" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "1°" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Frakus": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "2°" },
+                { tournament: "Copa Keidiki", position: "7-8°" },
+                { tournament: "UHC Minecraft", position: "6°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "2°" },
+                { tournament: "FIFA 25", position: "7-8°" },
+                { tournament: "Brawlhalla", position: "4-6°" },
+                { tournament: "Fulbo", position: "2°" },
+                { tournament: "CSGO 2v2", position: "3-4°" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "3-4°" },
+                { tournament: "Brawlhalla 2v2", position: "2°" },
+                { tournament: "Mortal Kombat", position: "1°" },
+                { tournament: "Fortnite", position: "1°" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Raah": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "7-8°" },
+                { tournament: "Copa Keidiki", position: "2°" },
+                { tournament: "UHC Minecraft", position: "4°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "7-8°" },
+                { tournament: "FIFA 25", position: "NJ" },
+                { tournament: "Brawlhalla", position: "2°" },
+                { tournament: "Fulbo", position: "2°" },
+                { tournament: "CSGO 2v2", position: "3-4°" },
+                { tournament: "PES 6", position: "2°" },
+                { tournament: "Clash Royale", position: "3-4°" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "3-4°" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "3°" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Simo": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "3-4°" },
+                { tournament: "Copa Keidiki", position: "7-8°" },
+                { tournament: "UHC Minecraft", position: "5°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "3-4°" },
+                { tournament: "FIFA 25", position: "2°" },
+                { tournament: "Brawlhalla", position: "3°" },
+                { tournament: "Fulbo", position: "1°" },
+                { tournament: "CSGO 2v2", position: "2°" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "2°" },
+                { tournament: "Brawlhalla 2v2", position: "3-4°" },
+                { tournament: "Mortal Kombat", position: "3°" },
+                { tournament: "Fortnite", position: "2°" },
+                { tournament: "BT3", position: "1°" }
+            ],
+            "Keidiki": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "3-4°" },
+                { tournament: "UHC Minecraft", position: "2°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "1°" },
+                { tournament: "FIFA 25", position: "NJ" },
+                { tournament: "Brawlhalla", position: "10°" },
+                { tournament: "Fulbo", position: "1°" },
+                { tournament: "CSGO 2v2", position: "2°" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "2°" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "NJ" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Eltrapo": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "7-8°" },
+                { tournament: "Copa Keidiki", position: "NJ" },
+                { tournament: "UHC Minecraft", position: "2°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "NJ" },
+                { tournament: "FIFA 25", position: "7-8°" },
+                { tournament: "Brawlhalla", position: "4-6°" },
+                { tournament: "Fulbo", position: "1°" },
+                { tournament: "CSGO 2v2", position: "NJ" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "NJ" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "2°" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "2°" },
+                { tournament: "BT3", position: "NJ" }
+            ],
+            "Franco": [
+                { tournament: "Pokémon", position: "NJ" },
+                { tournament: "Sparking Zero", position: "NJ" },
+                { tournament: "Copa Keidiki", position: "7-8°" },
+                { tournament: "UHC Minecraft", position: "4°" },
+                { tournament: "Supercopa UHC", position: "NJ" },
+                { tournament: "Boxeo Roblox", position: "3-4°" },
+                { tournament: "FIFA 25", position: "3-4°" },
+                { tournament: "Brawlhalla", position: "NJ" },
+                { tournament: "Fulbo", position: "NJ" },
+                { tournament: "CSGO 2v2", position: "1°" },
+                { tournament: "PES 6", position: "NJ" },
+                { tournament: "Clash Royale", position: "3-4°" },
+                { tournament: "CS 1.6", position: "NJ" },
+                { tournament: "Brawlhalla 2v2", position: "NJ" },
+                { tournament: "Mortal Kombat", position: "NJ" },
+                { tournament: "Fortnite", position: "NJ" },
+                { tournament: "BT3", position: "NJ" }
+            ]
+        };
+
+        const tournaments = [
+            // 2020
+            { name: "UHC Córdoba T1", champion: "Lesquick / Jusangame", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2020 },
+            
+            // 2021
+            { name: "UHC Ender T2", champion: "Lesquick / Jusangame", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2021 },
+            { name: "UHC Ender T3", champion: "Lesquick Santi Pa Tyrnrexx", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2021 },
+            { name: "UHC Ender T4", champion: "Lesquick definir", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2021 },
+            { name: "Liga CS 1.6", champion: "Lesquick", icon: "🎯", game: "CS 1.6", img: "cs16.jpg", year: 2021 },
+            { name: "Torneo 2v2 CS 1.6", champion: "Sin terminar", icon: "🎯", game: "CS 1.6", img: "cs16.jpg", year: 2021 },
+            { name: "Clash Royale", champion: "keidiki", icon: "🏰", game: "Clash Royale", img: "clash-royale.jpg", year: 2021 },
+            
+            // 2022
+            { name: "Mundialito CS 1.6", champion: "Lesquick", icon: "🎯", game: "CS 1.6", img: "cs16.jpg", year: 2022 },
+            { name: "Segunda División CS 1.6", champion: "Conor", icon: "🎯", game: "CS 1.6", img: "cs16.jpg", year: 2022 },
+            
+            // 2023
+            { name: "Torneo PVP Minecraft", champion: "Lesquick", icon: "⚔️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2023 },
+            { name: "UHC Ender T5", champion: "Eltrapo / TyrnRexx", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2023 },
+            
+            // 2024
+            { name: "Brawlhalla", champion: "TyrnRexx", icon: "⚔️", game: "Brawlhalla", img: "brawlhalla.jpg", year: 2024 },
+            { name: "CSGO 2v2", champion: "Franco & TyrnRexx", icon: "🔫", game: "CSGO", img: "csgo.jpg", year: 2024 },
+            { name: "Torneo PvP Minecraft", champion: "Por definir", icon: "⚔️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2024 },
+            { name: "Age Of Empires", champion: "Por definir", icon: "🏰", game: "Age Of Empires", img: "aoe.jpg", year: 2024 },
+            { name: "Fortnite", champion: "Frakus & Lesquick", icon: "🎮", game: "Fortnite", img: "fortnite.jpg", year: 2024 },
+            { name: "Brawlhalla 2", champion: "TyrnRexx & Sergio", icon: "⚔️", game: "Brawlhalla", img: "brawlhalla-2v2.jpg", year: 2024 },
+            { name: "CS 1.6", champion: "Lesquick", icon: "🎯", game: "CS 1.6", img: "cs16.jpg", year: 2024 },
+            { name: "Clash Royale", champion: "TyrnRexx", icon: "🏰", game: "Clash Royale", img: "clash-royale.jpg", year: 2024 },
+            
+            // 2025
+            { name: "Pokémon", champion: "TyrnRexx", icon: "🐉", game: "Pokemon", img: "pokemon.jpg", year: 2025 },
+            { name: "Sparking Zero", champion: "Samu", icon: "⚡", game: "Sparking Zero", img: "sparking-zero.jpg", year: 2025 },
+            { name: "Copa Keidiki", champion: "Lesquick", icon: "🏆", game: "Torneo Especial", img: "copa-keidiki.jpg", year: 2025 },
+            { name: "UHC Minecraft", champion: "Axer / Lesquick", icon: "⛏️", game: "Minecraft", img: "uhc-minecraft.jpg", year: 2025 },
+            { name: "Supercopa UHC", champion: "Lesquick", icon: "👑", game: "Minecraft", img: "supercopa-uhc.jpg", year: 2025 },
+            { name: "Boxeo Roblox", champion: "Keidiki", icon: "🥊", game: "Roblox", img: "boxeo-roblox.jpg", year: 2025 },
+            { name: "FIFA 25", champion: "Lesquick", icon: "⚽", game: "EA FC 25", img: "fifa25.jpg", year: 2025 },
+            { name: "Fulbo", champion: "Santi, Thiago, Lauti, Simo, Keidiki", icon: "🏟️", game: "Fútbol Real", img: "fulbo.jpg", year: 2025 },
+            { name: "PES 6", champion: "Lesquick", icon: "⚽", game: "PES 6", img: "pes6.jpg", year: 2025 },
+            { name: "Mortal Kombat", champion: "Frakus", icon: "🥋", game: "Mortal Kombat", img: "mortal-kombat.jpg", year: 2025 },
+            { name: "BT3", champion: "Simo", icon: "🐲", game: "Budokai Tenkaichi", img: "bt3.jpg", year: 2025 }
+        ];
+
+        const rankings = [
+            { player: "Lesquick", titles: 18, subtitles: 1 },
+            { player: "TyrnRexx", titles: 10, subtitles: 6 },
+            { player: "Frakus", titles: 4, subtitles: 8 },
+            { player: "Raah", titles: 2, subtitles: 9 },
+            { player: "Simo", titles: 2, subtitles: 6 },
+            { player: "Keidiki", titles: 2, subtitles: 4 },
+            { player: "Franco", titles: 2, subtitles: 0 },
+            { player: "Jusangame", titles: 2, subtitles: 0 },
+            { player: "Eltrapo", titles: 1, subtitles: 4 },
+            { player: "Santi Pa", titles: 1, subtitles: 2 },
+            { player: "Axer", titles: 1, subtitles: 2 },
+            { player: "Conor", titles: 1, subtitles: 2 },
+            { player: "Samu", titles: 1, subtitles: 0 },
+            { player: "Sergio", titles: 1, subtitles: 0 }
+        ];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('main > section').forEach(section => {
+                section.classList.remove('section-active');
+                section.classList.add('section-hidden');
+            });
+            document.getElementById(sectionId).classList.remove('section-hidden');
+            document.getElementById(sectionId).classList.add('section-active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderTournaments() {
+            const container = document.getElementById('tournamentsContainer');
+            
+            // Group tournaments by year
+            const tournamentsByYear = {};
+            tournaments.forEach(t => {
+                if (!tournamentsByYear[t.year]) {
+                    tournamentsByYear[t.year] = [];
+                }
+                tournamentsByYear[t.year].push(t);
+            });
+            
+            // Sort years in descending order
+            const years = Object.keys(tournamentsByYear).sort((a, b) => b - a);
+            
+            container.innerHTML = years.map(year => `
+                <div class="year-section">
+                    <div class="year-header">
+                        <div class="year-line"></div>
+                        <h3 class="title-font year-title">${year}</h3>
+                        <div class="year-line"></div>
+                    </div>
+                    
+                    <div class="tournament-grid">
+                        ${tournamentsByYear[year].map(t => `
+                            <div class="tournament-card">
+                                <div class="tournament-card-header">
+                                    <img src="./images/${t.img}" alt="${t.name}" class="tournament-bg" 
+                                        onerror="this.src='https://via.placeholder.com/400x180/1a1a2e/ffffff?text=${encodeURIComponent(t.name)}'">
+                                </div>
+                                <div class="tournament-card-body">
+                                    <h4 class="tournament-name title-font">${t.name}</h4>
+                                    <div class="tournament-champion">
+                                        <div class="flex-1">
+                                            <div class="tournament-champion-label">Campeón</div>
+                                            <div class="tournament-champion-name">${t.champion}</div>
+                                        </div>
+                                        <div class="text-2xl">🏆</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRankings() {
+            const tbody = document.getElementById('rankingTable');
+            tbody.innerHTML = rankings.map((r, index) => {
+                let rankClass = 'table-row';
+                if (index === 0) rankClass += ' rank-1';
+                else if (index === 1) rankClass += ' rank-2';
+                else if (index === 2) rankClass += ' rank-3';
+                
+                let medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+                
+                return `
+                    <tr class="${rankClass}" onclick="showPlayerModal('${r.player}')">
+                        <td class="py-5 px-6 font-bold text-lg">${medal || (index + 1)}</td>
+                        <td class="py-5 px-6 font-semibold text-lg">${r.player}</td>
+                        <td class="py-5 px-6 text-center font-bold text-xl gradient-gold">${r.titles}</td>
+                        <td class="py-5 px-6 text-center text-gray-400">${r.subtitles}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderMiniRanking() {
+            const tbody = document.getElementById('miniRankingTable');
+            const top5 = rankings.slice(0, 5);
+            tbody.innerHTML = top5.map((r, index) => {
+                let medal = '';
+                if (index === 0) medal = '🥇';
+                else if (index === 1) medal = '🥈';
+                else if (index === 2) medal = '🥉';
+                
+                return `
+                    <tr class="table-row hover:bg-white hover:bg-opacity-5">
+                        <td class="py-4 px-6 font-bold">${medal || (index + 1)}</td>
+                        <td class="py-4 px-6 font-semibold">${r.player}</td>
+                        <td class="py-4 px-6 text-center font-bold gradient-gold">${r.titles}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderHallOfFame() {
+            const container = document.getElementById('hallOfFame');
+            container.innerHTML = tournaments.map((t, index) => `
+                <div class="card-trophy p-8 rounded-2xl text-center" style="animation-delay: ${index * 0.1}s">
+                    <div class="text-6xl mb-6 crown-glow">👑</div>
+                    <h3 class="title-font text-2xl font-bold text-white mb-3">${t.champion}</h3>
+                    <div class="h-px w-16 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto mb-3"></div>
+                    <p class="text-gray-300 mb-2">${t.name}</p>
+                    <div class="text-4xl mt-4">${t.icon}</div>
+                </div>
+            `).join('');
+        }
+
+        function showPlayerModal(playerName) {
+            const modal = document.getElementById('playerModal');
+            const content = document.getElementById('playerModalContent');
+            
+            const player = rankings.find(p => p.player === playerName);
+            const stats = playerStats[playerName] || [];
+            
+            const championships = stats.filter(s => s.position === "1°").length;
+            const podiums = stats.filter(s => s.position === "2°" || s.position === "3°").length;
+            const participation = stats.filter(s => s.position !== "NJ").length;
+            
+            function getResultClass(position) {
+                if (position === "NJ") return "result-nj";
+                if (position === "1°") return "result-1";
+                if (position === "2°") return "result-2";
+                if (position === "3°") return "result-3";
+                return "result-other";
+            }
+            
+            content.innerHTML = `
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">👤</div>
+                    <h2 class="title-font text-4xl font-bold gradient-gold mb-2">${playerName}</h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto"></div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white bg-opacity-5 p-4 rounded-lg text-center">
+                        <div class="text-3xl font-bold gradient-gold mb-1">${player.titles}</div>
+                        <div class="text-sm text-gray-400">Títulos</div>
+                    </div>
+                    <div class="bg-white bg-opacity-5 p-4 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-white mb-1">${player.subtitles}</div>
+                        <div class="text-sm text-gray-400">Subtítulos</div>
+                    </div>
+                    <div class="bg-white bg-opacity-5 p-4 rounded-lg text-center">
+                        <div class="text-3xl font-bold purple-accent mb-1">${podiums}</div>
+                        <div class="text-sm text-gray-400">Podios</div>
+                    </div>
+                    <div class="bg-white bg-opacity-5 p-4 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-white mb-1">${participation}</div>
+                        <div class="text-sm text-gray-400">Participaciones</div>
+                    </div>
+                </div>
+                
+                <h3 class="title-font text-2xl font-bold text-white mb-4">Historial de Torneos</h3>
+                <div class="space-y-2 max-h-96 overflow-y-auto">
+                    ${stats.map(s => `
+                        <div class="bg-white bg-opacity-5 p-4 rounded-lg flex justify-between items-center hover:bg-opacity-10 transition">
+                            <span class="font-semibold text-white">${s.tournament}</span>
+                            <span class="result-badge ${getResultClass(s.position)}">${s.position}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePlayerModal() {
+            const modal = document.getElementById('playerModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        document.getElementById('playerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePlayerModal();
+            }
+        });
+
+        // Initialize
+        renderTournaments();
+        renderRankings();
+        renderHallOfFame();
+        renderMiniRanking();
+    </script>
+</body>
+</html> 
+
